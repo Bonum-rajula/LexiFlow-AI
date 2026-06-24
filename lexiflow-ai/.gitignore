@@ -1,0 +1,9 @@
+# .gitignore (Create this immediately)
+__pycache__/
+*.pyc
+.env
+.venv/
+*.db
+chroma_data/
+.DS_Store
+*.log
