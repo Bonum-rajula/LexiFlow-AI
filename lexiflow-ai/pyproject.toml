@@ -1,0 +1,38 @@
+# pyproject.toml
+[project]
+name = "lexiflow-ai"
+version = "0.1.0"
+description = "Autonomous Multi-Agent RAG Orchestrator"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Bonum Rajul", email = "bonumrajula01@gmail.com" }]
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.0",
+    "langgraph>=0.0.20",
+    "langchain>=0.1.0",
+    "langchain-openai>=0.0.5",
+    "chromadb>=0.4.22",
+    "pypdf>=4.0.0",
+    "pymupdf>=1.23.0",          # Better for complex tables/forms
+    "tiktoken>=0.5.0",
+    "tenacity>=8.2.0",          # For retries (Immune System)
+    "loguru>=0.7.0",            # Structured logging (Pain Receptors)
+]
+
+[project.scripts]
+lexiflow = "lexiflow.main:app"   # Allows running `uvicorn lexiflow.main:app`
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.26.0",            # For testing FastAPI
+]

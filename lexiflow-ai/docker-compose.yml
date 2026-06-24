@@ -1,0 +1,46 @@
+# docker-compose.yml (Fixed - No version, no override command)
+services:
+  # The LexiFlow API (Our Brain)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lexiflow-api
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    depends_on:
+      - chromadb
+      - redis
+    command: uvicorn src.lexiflow.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Vector Database (Removed the bad 'command' override)
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: lexiflow-chroma
+    ports:
+      - "8001:8000"   # Host port 8001 maps to internal 8000 (avoids conflict with API)
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma_data
+      - ANONYMIZED_TELEMETRY=FALSE
+    volumes:
+      - ./chroma_data:/chroma/chroma_data
+    # NO 'command' here - let the default entrypoint run the server
+
+  # Redis (Changed host port to avoid conflict)
+  redis:
+    image: redis:alpine
+    container_name: lexiflow-redis
+    ports:
+      - "6380:6379"   # Host uses 6380, internal container still uses 6379
+    command: redis-server --appendonly yes
