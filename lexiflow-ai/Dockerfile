@@ -12,13 +12,15 @@ RUN apt-get update && apt-get install -y \
 # Copy only the dependency file first (Docker layer caching)
 COPY pyproject.toml ./
 
+# Copy the source code before pip install (needed for editable install)
+COPY src/ ./src/
+
 # Install dependencies using pip (since we don't have uv installed yet, pip is fine)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -e . && \
     pip install --no-cache-dir pytest pytest-asyncio httpx
 
 # Copy the rest of the source
-COPY src/ ./src/
 COPY tests/ ./tests/
 
 # Run as non-root user

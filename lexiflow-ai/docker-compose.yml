@@ -18,6 +18,8 @@ services:
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
+      - ./data:/app/data
+      - ./sample.pdf:/app/sample.pdf
     depends_on:
       - chromadb
       - redis

@@ -21,6 +21,7 @@ dependencies = [
     "tiktoken>=0.5.0",
     "tenacity>=8.2.0",          # For retries (Immune System)
     "loguru>=0.7.0",            # Structured logging (Pain Receptors)
+    "langchain-text-splitters>=0.0.1",   
 ]
 
 [project.scripts]
@@ -36,3 +37,7 @@ dev-dependencies = [
     "pytest-asyncio>=0.23.0",
     "httpx>=0.26.0",            # For testing FastAPI
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["lexiflow"]
