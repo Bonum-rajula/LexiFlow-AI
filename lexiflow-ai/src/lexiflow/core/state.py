@@ -19,3 +19,7 @@ class AgentState(TypedDict):
     
     # Error handling (for resilience)
     error: Optional[str]
+
+    # The retry logic
+    retry_count: int          # Number of times we've re-retrieved
+    max_retries: int          # Maximum allowed retries (default 2)
