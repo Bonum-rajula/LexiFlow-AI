@@ -1,159 +1,115 @@
-# LexiFlow AI: Autonomous Multi-Agent RAG Orchestrator
+# LexiFlow AI
 
-**Lightweight, open-source, multi-agent RAG for technical documents, built with Python, FastAPI, LangGraph, and vector search.**
+## Autonomous Multi-Agent RAG Orchestrator
 
-LexiFlow AI is an autonomous document intelligence system designed to ingest dense technical PDFs, retrieve the most relevant context, critique retrieval quality, and synthesize grounded answers with a multi-agent workflow.
+LexiFlow AI is a production-ready, open-source Retrieval-Augmented Generation (RAG) platform that leverages a multi-agent architecture to answer questions from complex technical documents with improved accuracy, traceability, and reliability.
 
-It is built for teams and engineers who need more than a basic chatbot: they need a reliable, inspectable, and modular assistant that can reason over long-form documents with better structure and control.
+Unlike traditional RAG pipelines that rely on a single retrieval-and-generation workflow, LexiFlow delegates responsibilities to specialized agents that collaborate through a stateful orchestration layer powered by LangGraph.
 
----
+### Core Agents
 
-## Why LexiFlow AI Exists
+* **Retriever Agent** — Retrieves the most relevant document chunks from a vector database.
+* **Critic Agent** — Evaluates retrieved context for relevance, completeness, and factual consistency.
+* **Synthesizer Agent** — Generates a final response using validated context and critique feedback.
 
-Large technical PDFs are difficult to query well with a single-pass retrieval pipeline. LexiFlow AI addresses that with a layered agentic design:
-
-- **Agent A — Retriever:** extracts and retrieves the most relevant chunks from the source document.
-- **Agent B — Critic:** checks whether the retrieved context actually supports the user’s question and flags missing or weak evidence.
-- **Agent C — Synthesizer:** generates a final answer grounded in the validated context.
-
-This separation of concerns makes the system easier to debug, easier to extend, and more trustworthy for high-stakes technical reading.
+The platform is built around the principles of Clean Architecture and Dependency Inversion, enabling developers to replace infrastructure components such as language models, vector stores, or embedding providers without modifying business logic.
 
 ---
 
-## What Makes It Stand Out
+## Key Features
 
-- **Built around LangGraph** for explicit agent workflows and controlled orchestration.
-- **Multi-agent reasoning pipeline** instead of a flat retrieve-and-generate chain.
-- **RAG-first architecture** for grounded, document-based answers.
-- **Designed for heavy PDFs** such as compliance manuals, policy documents, research papers, and technical standards.
-- **Dockerized deployment** for repeatable local and production environments.
-- **Vector database ready** with support for **ChromaDB** or **pgvector**.
-- **FastAPI backend** for clean, modern API delivery.
-- **Portfolio-friendly naming and structure** that clearly signals LangGraph experience to recruiters and technical reviewers.
+### Multi-Agent Orchestration
 
----
+Leverages LangGraph to coordinate specialized agents through stateful and conditional workflows.
 
-## Tech Stack
+### Intelligent Document Retrieval
 
-**Core**
-- Python
-- FastAPI
-- LangGraph
-- LangChain
+Uses vector similarity search through ChromaDB to locate highly relevant contextual information.
 
-**Retrieval & Storage**
-- ChromaDB or pgvector
-- Embedding model of choice
-- Document chunking and metadata storage
+### Automated Context Evaluation
 
-**Infrastructure**
-- Docker
-- Docker Compose
+A dedicated Critic Agent assesses retrieval quality and identifies gaps before answer generation.
 
-**Optional Enhancements**
-- PostgreSQL
-- OCR for scanned PDFs
-- Streamlit or React frontend
-- Background queue for ingestion jobs
-- Authentication and usage tracking
+### Self-Correcting Retrieval Loops
+
+Automatically performs retrieval retries when context quality falls below acceptable thresholds.
+
+### PDF Knowledge Ingestion
+
+Uploads, parses, chunks, embeds, and indexes PDF documents for semantic search.
+
+### Production-Oriented Design
+
+Built with structured logging, health monitoring, resilience patterns, dependency injection, and automated testing.
+
+### Containerized Deployment
+
+Fully containerized using Docker and Docker Compose for reproducible local and production deployments.
 
 ---
 
 ## Architecture Overview
 
 ```text
-User Query
-   ↓
-FastAPI Endpoint
-   ↓
-LangGraph Orchestrator
-   ├── Agent A: Retrieve relevant chunks
-   ├── Agent B: Critique factual grounding
-   └── Agent C: Synthesize final answer
-   ↓
-Response with grounded context
+User
+ │
+ ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        FastAPI Gateway                         │
+│  /upload   (ingest PDFs)   │   /ask   (ask questions)          │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    LangGraph Orchestrator                      │
+│                                                               │
+│  START                                                        │
+│    │                                                          │
+│    ▼                                                          │
+│ Retriever Agent                                               │
+│    │                                                          │
+│    ▼                                                          │
+│ Critic Agent                                                  │
+│    │                                                          │
+│    ▼                                                          │
+│ Synthesizer Agent                                             │
+│    │                                                          │
+│    ▼                                                          │
+│ Final Response                                                │
+│                                                               │
+│ Retriever → ChromaDB                                          │
+│ Critic → LLM Provider                                         │
+│ Synthesizer → LLM Provider                                    │
+└───────────────────────────────────────────────────────────────┘
 ```
 
-### Agent Responsibilities
+### Architectural Principles
 
-#### Agent A — Retriever
-Fetches the most relevant chunks from the indexed document corpus using vector similarity search and metadata filters.
+LexiFlow follows a layered architecture:
 
-#### Agent B — Critic
-Evaluates whether the retrieved context is sufficient, relevant, and factually aligned with the user query. It can request more evidence when needed.
-
-#### Agent C — Synthesizer
-Produces the final response from the validated context, keeping the answer concise, accurate, and grounded in source material.
+* Domain and business logic remain independent of infrastructure concerns.
+* Infrastructure dependencies are injected at runtime.
+* Interfaces define contracts between layers.
+* Components remain highly testable and replaceable.
 
 ---
 
-## Key Features
+## Technology Stack
 
-- PDF upload and ingestion
-- Text extraction and chunking
-- Vector indexing
-- Multi-agent query workflow
-- Grounded response generation
-- Retrieval critique step
-- API-first design
-- Dockerized deployment
-- Extensible architecture for future agents and tools
-
----
-
-## Example Use Cases
-
-LexiFlow AI is ideal for:
-
-- Compliance and policy document search
-- Scientific paper question answering
-- Internal knowledge base assistants
-- Procurement and tender document review
-- Technical manual navigation
-- Research support for long-form PDFs
-
----
-
-## Project Goals
-
-LexiFlow AI was designed to demonstrate:
-
-- Practical LangGraph implementation
-- Strong backend engineering with FastAPI
-- Production-minded retrieval architecture
-- Modular system design
-- Clear technical depth for AI automation roles
-
-This makes the project especially relevant for roles involving:
-- AI Automation Engineering
-- LLM Application Development
-- Retrieval-Augmented Generation
-- Agentic workflow design
-- Backend AI systems
-
----
-
-## Repository Structure
-
-```text
-lexiflow-ai/
-├── app/
-│   ├── api/
-│   ├── core/
-│   ├── agents/
-│   ├── rag/
-│   ├── services/
-│   └── main.py
-├── data/
-│   ├── uploads/
-│   └── processed/
-├── tests/
-├── docker/
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
+| Layer                  | Technology                    |
+| ---------------------- | ----------------------------- |
+| API Framework          | FastAPI                       |
+| Workflow Orchestration | LangGraph                     |
+| Vector Database        | ChromaDB                      |
+| Embeddings             | OpenAI text-embedding-3-small |
+| Language Model         | OpenAI GPT-4o Mini            |
+| PDF Processing         | PyMuPDF                       |
+| Text Chunking          | LangChain Text Splitters      |
+| Configuration          | Pydantic Settings             |
+| Logging                | Loguru                        |
+| Resilience             | Tenacity                      |
+| Testing                | Pytest, Pytest-Asyncio, HTTPX |
+| Containerization       | Docker, Docker Compose        |
 
 ---
 
@@ -161,175 +117,330 @@ lexiflow-ai/
 
 ### Prerequisites
 
-- Python 3.10+
-- Docker and Docker Compose
-- Git
-- API key or local model access, depending on your LLM setup
+Before running the project, ensure the following tools are installed:
 
-### 1. Clone the repository
+* Docker
+* Docker Compose
+* OpenAI API Key
+
+---
+
+### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/lexiflow-ai.git
+git clone https://github.com/yourusername/lexiflow-ai.git
 cd lexiflow-ai
 ```
 
-### 2. Create a virtual environment
+---
+
+### Configure Environment Variables
+
+Create a local environment file:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+cp .env.example .env
 ```
 
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure environment variables
-
-Create a `.env` file in the project root:
+Update the values accordingly:
 
 ```env
-OPENAI_API_KEY=your_api_key_here
-CHROMA_PERSIST_DIR=./data/chroma
-UPLOAD_DIR=./data/uploads
+OPENAI_API_KEY=your_api_key
+
+OPENAI_MODEL=gpt-4o-mini
 EMBEDDING_MODEL=text-embedding-3-small
-LLM_MODEL=gpt-4.1-mini
-```
 
-If you are using PostgreSQL with pgvector, include:
+CHROMA_HTTP_URL=http://chromadb:8000
 
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/lexiflow
-```
-
-### 5. Run the app locally
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API will be available at:
-
-```text
-http://127.0.0.1:8000
+CHUNK_SIZE=1000
+CHUNK_OVERLAP=200
 ```
 
 ---
 
-## Docker Setup
-
-### Build and run
+### Build and Start Services
 
 ```bash
-docker compose up --build
+docker compose build
+docker compose up -d
 ```
 
-This starts the application in a reproducible containerized environment.
+Services:
+
+| Service          | URL                   |
+| ---------------- | --------------------- |
+| LexiFlow API     | http://localhost:8000 |
+| ChromaDB         | http://localhost:8001 |
+| Redis (Optional) | localhost:6380        |
 
 ---
 
-## API Endpoints
+### Verify Installation
 
-### Health Check
-
-```http
-GET /health
+```bash
+curl http://localhost:8000/health
 ```
 
-### Upload Document
-
-```http
-POST /documents/upload
-```
-
-### Ask a Question
-
-```http
-POST /query
-```
-
-Example payload:
+Example response:
 
 ```json
 {
-  "document_id": "doc_001",
-  "question": "What does the policy say about data retention?"
+  "status": "alive",
+  "vector_db": "http://chromadb:8000"
 }
 ```
 
-### List Documents
+---
 
-```http
-GET /documents
+## API Usage
+
+### Upload a PDF
+
+```bash
+curl -X POST http://localhost:8000/upload/ \
+  -F "file=@/path/to/document.pdf"
+```
+
+Example response:
+
+```json
+{
+  "filename": "document.pdf",
+  "num_chunks": 42,
+  "status": "success",
+  "message": "Successfully ingested 42 chunks."
+}
 ```
 
 ---
 
-## Design Principles
+### Ask a Question
 
-### 1. Grounded Answers
-The system prioritizes evidence-backed responses over fluent but unsupported generation.
+```bash
+curl -X POST http://localhost:8000/ask/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What does section 3.2 say about data privacy?"
+  }'
+```
 
-### 2. Separation of Concerns
-Retrieval, critique, and synthesis are handled by different nodes in the graph.
+Example response:
 
-### 3. Modularity
-Each component can be improved independently without rewriting the whole system.
-
-### 4. Portability
-Docker support makes it easy to run locally, in CI, or in a cloud environment.
-
-### 5. Extensibility
-The graph can later support memory, tool use, query routing, or human-in-the-loop review.
-
----
-
-## Security and Reliability Notes
-
-- Uploaded files should be validated before processing.
-- Sensitive documents should be stored with access controls.
-- API keys must never be committed to version control.
-- Logging should avoid leaking source content unless intentionally enabled.
-- OCR and ingestion pipelines should fail gracefully on malformed files.
+```json
+{
+  "answer": "Section 3.2 states that all personal data must be anonymized before processing.",
+  "chunks_used": 5,
+  "critique": "{...}",
+  "retry_count": 0,
+  "error": null
+}
+```
 
 ---
 
-## Roadmap
+## API Documentation
 
-- Add OCR support for scanned PDFs
-- Add citation-level source highlighting
-- Add streaming responses
-- Add authentication and rate limiting
-- Add document-level permissions
-- Add evaluation harness for retrieval accuracy
-- Add web UI for document uploads and chat
-- Add query routing across multiple documents
+Interactive API documentation is automatically generated by FastAPI.
+
+### Swagger UI
+
+```text
+http://localhost:8000/docs
+```
+
+### ReDoc
+
+```text
+http://localhost:8000/redoc
+```
 
 ---
 
-## Why Recruiters Notice This Project
+## Testing
 
-LexiFlow AI is not just another chatbot clone. It signals:
+### Unit Tests
 
-- Real understanding of agent orchestration
-- Strong backend API engineering
-- Retrieval architecture knowledge
-- Document AI experience
-- Professional deployment awareness
-- LangGraph experience made visible in the repo title
+```bash
+docker exec -it lexiflow-api pytest tests/unit -v
+```
 
-That makes it a strong portfolio piece for AI automation and LLM engineering roles.
+### Integration Tests
+
+```bash
+docker exec -it lexiflow-api pytest tests/integration -v
+```
+
+### Test Coverage Goals
+
+* Agent behavior
+* Orchestrator workflows
+* Service layer logic
+* API endpoints
+* Infrastructure adapters
+* End-to-end document ingestion and querying
+
+---
+
+## Project Structure
+
+```text
+lexiflow-ai/
+├── docker-compose.yml
+├── Dockerfile
+├── pyproject.toml
+├── .env.example
+├── tests/
+│   ├── unit/
+│   └── integration/
+│
+└── src/
+    └── lexiflow/
+        ├── core/
+        │   ├── interfaces/
+        │   ├── state/
+        │   └── config/
+        │
+        ├── infrastructure/
+        │   ├── vectorstores/
+        │   ├── embeddings/
+        │   ├── llm/
+        │   └── parsers/
+        │
+        ├── agents/
+        │   ├── retriever/
+        │   ├── critic/
+        │   └── synthesizer/
+        │
+        ├── orchestration/
+        │   └── graph.py
+        │
+        ├── services/
+        │
+        ├── api/
+        │   ├── routes/
+        │   └── schemas/
+        │
+        ├── middleware/
+        │
+        └── main.py
+```
+
+---
+
+## Extending LexiFlow
+
+### Add a New Agent
+
+1. Create a new agent implementation.
+2. Define the agent contract.
+3. Register the node in the LangGraph workflow.
+4. Add routing logic within the orchestrator.
+
+### Replace the Vector Database
+
+Implement the VectorStore interface and register the new implementation through dependency injection.
+
+### Use a Different LLM Provider
+
+Implement the LLMProvider abstraction for providers such as:
+
+* Anthropic Claude
+* Azure OpenAI
+* Google Gemini
+* Ollama
+* Local LLMs
+
+No business logic changes are required.
+
+---
+
+## Deployment Considerations
+
+### Environment Management
+
+Store sensitive configuration through environment variables or secret management systems.
+
+### Horizontal Scaling
+
+The API service remains stateless and can be scaled behind a load balancer.
+
+### Persistent Storage
+
+For production deployments:
+
+* Persist ChromaDB storage volumes.
+* Configure backup strategies.
+* Deploy Redis as a managed service when applicable.
+
+### Security
+
+Before public exposure, consider implementing:
+
+* API authentication
+* Rate limiting
+* Request validation policies
+* TLS termination
+* Audit logging
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+### Development Workflow
+
+```bash
+git checkout -b feature/my-feature
+```
+
+Implement your changes, add tests, and verify:
+
+```bash
+pytest tests/
+```
+
+Submit a Pull Request with:
+
+* Clear description
+* Architecture rationale
+* Test coverage
+* Documentation updates
 
 ---
 
 ## License
 
-Open-source license placeholder. Add one that matches your intended distribution model.
+This project is licensed under the Apache License Version 2.0
+
+See the LICENSE file for full details.
+
+---
+
+## Acknowledgments
+
+LexiFlow AI is built upon several outstanding open-source technologies:
+
+* LangGraph
+* LangChain
+* FastAPI
+* ChromaDB
+* OpenAI
+* Pydantic
+* PyMuPDF
+
+Their contributions make modern AI application development significantly more accessible and maintainable.
 
 ---
 
 ## Author
 
-Built by **Ranger** as a portfolio-grade demonstration of agentic RAG design, backend engineering, and practical AI system architecture.
+**Bonum Rajula**
+
+Email: [bonumrajula01@gmail.com](mailto:bonumrajula01@gmail.com)
+
+GitHub: https://github.com/Bonum-rajula
+
+---
+
+LexiFlow AI demonstrates how autonomous multi-agent systems, clean architecture principles, and modern AI tooling can be combined to create reliable, extensible, and production-ready Retrieval-Augmented Generation platforms.
